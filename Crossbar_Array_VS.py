@@ -24,6 +24,8 @@ w_avg = 0.03
 
 
 class Crossbar_diff():
+    #array[row, col]
+
     @staticmethod
     def device_update(w_in, num_pulse):
         w = w_in
@@ -49,6 +51,11 @@ class Crossbar_diff():
 
     def get_array(self):
         return self.I_array
+
+    def get_dots(self, input):
+        #input vector as 1D numpy array pulse widths
+        output = np.array(np.dot(self.I_array[:, col], input)) #charge as output
+        return output
 
 
 #class Crossbar_alg():
