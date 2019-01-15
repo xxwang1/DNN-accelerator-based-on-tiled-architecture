@@ -1,8 +1,13 @@
 #### cb_size=32
-crossbar_set = []
 import numpy as np
 import math
-
+import Crossbar
+from Crossbar import Crossbar
+import gl
+from gl import cb_size
+from gl import (w_tot, w_int)
+from gl import crossbar_set
+from gl import input_set
 # --- Generate test arrays ---
 # Array for fc layers
 array_test = np.array(list(range(78400))) #7840
@@ -65,7 +70,6 @@ def fc_mapping(weight): # Get a 2D weight return a 2D array map
 
 def conv_mapping(weight): # Get a 4D weight return a 2D array map
     weight_reorder = np.moveaxis(weight, -1, 0) 
-    #print(weight_reorder)
     w_shape = weight_reorder.shape # (NF, row, col, ch)
     weight_2D = np.reshape(weight_reorder, (w_shape[0], w_shape[1]*w_shape[2]*w_shape[3]))
     weight_2D = np.swapaxes(weight_2D, 0, 1) # formate (row, col); (NF, all el in one position stacked up)
