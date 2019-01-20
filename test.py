@@ -1,30 +1,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import scipy.signal as signal
 
-n1 = 9e-8
-n2 = 15.5
-gamma = 1e-5
-delta = 4
-pulse_wdith = 100e-6
+t = np.arange(0, 10, 1/100)
+v = 0.5*signal.square((t-1)*(6/10), 0.2)
 
-Vw = 1.5
-Vr = 0.5
-
-A = (gamma*np.sinh(delta*Vr))
-B = n1*np.sinh(n2*Vw)
-
-num_point = 20
-
-w = 0.03
-gmax = 10
-I_plot = np.zeros(num_point)
-
-for i in range(num_point):
-    I_plot[i] = w*A
-    w = w + B*(1-w)*pulse_wdith
-
-    #I_plot[i] = w*(gamma*np.sinh(delta*Vr))
-    #w = w + n1*np.sinh(n2*Vw)*(1-w)*pulse_wdith
-
-plt.plot(I_plot*1e6)
-plt.show
+plt.plot(t,v)
+plt.axis('off')
+plt.figure(figsize=(2,4))
+plt.savefig('fig1.svg')
+plt.show()

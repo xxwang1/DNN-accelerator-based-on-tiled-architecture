@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>3d5eb7c9-179a-450a-95f0-6e77d7f63f44</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>Crossbar_Array_VS.py</StartupFile>
+    <StartupFile>test.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>

@@ -59,9 +59,9 @@ class Crossbar_diff():
 #Parameter: Algebra model
 G_min_avg = 2e-6  #average minimal conductance
 G_max_avg = 4e-6  #average maximum conductance
-P_max = 20
+P_max = 25
 A_avg = P_max/2
-B_avg = (G_max_avg - G_min_avg)/(1-exp(-P_max/A))
+B_avg = (G_max_avg - G_min_avg)/(1-exp(-P_max/A_avg))
 V_read = 1
 
 ###########################################
@@ -127,12 +127,17 @@ cb_test = Crossbar_alg(size, ini_array)
 
 output = cb_test.get_array().flatten()
 print(output)
-plt.plot(output)
-plt.show()
+#plt.plot(output)
+#plt.show()
 
 cb_test2 = Crossbar_alg(size, np.full((size, size),P_max))
 cb_test2.update(-1*ini_array)
-output = cb_test2.get_array().flatten()
+output2 = cb_test2.get_array().flatten()
 print(output)
-plt.plot(output)
+#plt.plot(output2)
+#plt.show()
+
+plt.plot(np.concatenate((output, output2))*1e6, color='red',)
+plt.xlabel("#Pulse")
+plt.ylabel(r'Condcutance ($\mu$S)')
 plt.show()
