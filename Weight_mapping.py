@@ -96,15 +96,8 @@ def dw_conv_mapping(weight_3D, stride, duplicate, time_multiplex): #Get a 3D wei
     return fc_mapping(weight_dw)
 
 
-weight=np.array(list(range(45)))
-weight=weight.reshape(3,3,5)
-    
-    
-for layer in weights: 
-           
-    if str(layer)[:2] == 'fc':
-        weights_mapped[layer] = fc_mapping(weights[layer])
-    elif str(layer)[:4] == 'conv':
-        weights_mapped[layer] = conv_mapping(weights[layer])
-
-dw=dw_conv_mapping(weight, 1, 3, 2)
+def pw_conv_mapping(weight): # Get a 4D weight return a 2D array map
+    weight_shape=weight.shape
+    print(weight_shape[3])
+    weight_2D = weight.reshape(weight_shape[2], weight_shape[3])
+    return fc_mapping(weight_2D)

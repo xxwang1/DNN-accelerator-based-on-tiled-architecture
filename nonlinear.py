@@ -1,5 +1,5 @@
 import numpy as np
-def batchnorm(input_act, beta, gamma, moving_average, moving_variance, eps=0.001):
+def batchnorm(input_act, beta, gamma, moving_average, moving_variance, eps=0.00001):
 	input_shape=input_act.shape
 	output_act=np.zeros((input_shape[0],input_shape[1], input_shape[2]))
 	for i in range(len(input_act)):

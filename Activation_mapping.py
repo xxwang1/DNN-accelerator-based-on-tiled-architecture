@@ -153,6 +153,20 @@ def act_dw_conv_mapping(input_act, weight_3D, stride, duplicate, time_multiplex)
     input_2D=input_array.reshape(patch_num,w_size_dw)
    
     return act_fc_mapping(input_2D)
+def act_pw_conv_mapping(input_act,weight_4D, stride):
+    #input_act(ch, row, col)  weight_4D(row, col, ch, NF)    
+    w_shape=weight_4D.shape
+    
+    input_extend=zero_padding(input_act,w_shape[0],w_shape[1],stride,1)
+
+    input_extend_shape=input_extend.shape
+    input_extend_row_cnt=input_extend_shape[1]
+    input_extend_col_cnt=input_extend_shape[2]
+    
+    input_2D=input_extend.reshape(w_shape[2], input_extend_row_cnt*input_extend_col_cnt)
+    input_2D=np.moveaxis(input_2D,-1,0)
+    
+    return act_fc_mapping(input_2D)
 #input_act=np.array(list(range(500)))
 #input_act=input_act.reshape(10,10,5)
 #input_act=np.moveaxis(input_act, -1, 0)
