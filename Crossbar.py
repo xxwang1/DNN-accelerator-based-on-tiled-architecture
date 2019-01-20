@@ -1,3 +1,9 @@
+import gl
+from gl import cb_size
+from gl import (w_tot, w_int)
+from gl import crossbar_set
+from gl import input_set
+import numpy as np
 class Crossbar():
     def __init__(self, cb_size = cb_size, tot_bit = w_tot, int_bit = w_int):
         self.cb_size = cb_size # CB size
@@ -15,4 +21,3 @@ class Crossbar():
         return self.array
     def matmul(self, input_vector):
         return np.matmul(input_vector, self.array)
- 
