@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from math import log, exp
 
-###########################################
+######################################################################################
 #Parameter: Lu Group Differential model
 n1 = 9e-8
 n2 = 15.5
@@ -18,8 +18,7 @@ B_p = n1*np.sinh(n2*Vw)
 B_n = n1*np.sinh(n2*(-Vw))
 
 w_avg = 0.03
-###########################################
-
+######################################################################################
 class Crossbar_diff():
     #array[row, col]
 
@@ -51,11 +50,11 @@ class Crossbar_diff():
 
     def get_dots(self, input):
         #input vector as 1D numpy array pulse widths
-        output = np.array(np.dot(self.I_array[:, col], input)) #charge as output
+        output = np.array(np.dot(self.I_array, input)) #charge as output
         return output
 
 
-###########################################
+######################################################################################
 #Parameter: Algebra model
 G_min_avg = 2e-6  #average minimal conductance
 G_max_avg = 4e-6  #average maximum conductance
@@ -64,8 +63,7 @@ A_avg = P_max/2
 B_avg = (G_max_avg - G_min_avg)/(1-exp(-P_max/A_avg))
 V_read = 1
 
-###########################################
-
+######################################################################################
 class Crossbar_alg():
     @staticmethod
     def device_update(G_in, G_min, G_max, A, num_pulse): 
@@ -110,34 +108,72 @@ class Crossbar_alg():
     def get_array(self):
         return self.G_array
 
-    def cal_dot(self, input): 
+    def accumulate(self, input): 
         output = np.matmul(input*V_read, self.G_array)
         return output
 
 
-size = 5
+######################################################################################
+#Device Quantization Model
+G_stdev = 10    #Assume conductance normalized to 8-bit
+num_bits = 8    #number of bits for ADC and input activation
+######################################################################################
+class Crossbar_Quant():
+    def __init__(self, cb_size, new_array):
+        self.cb_size = cb_size
+        self.G_array = new_array + np.random.normal(0, G_stdev, (cb_size, cb_size))
 
-#ini_array = np.array(range(size*size)).reshape(size, size)
-#test_array = np.array(ini_array)
-#cb_test = Crossbar_diff(size, test_array)
-#output = cb_test.get_array().flatten()
+    def accumulate(self, input):
+        output = np.matmul(input, self.G_array)
+        output = output/(self.cb_size*2**num_bits*2**num_bits)*2**num_bits
+        output = np.round(output)
+        return output
 
-ini_array = np.array(range(size*size)).reshape(size, size)
-cb_test = Crossbar_alg(size, ini_array)
+    def get_array(self):
+        return self.G_array
 
-output = cb_test.get_array().flatten()
-print(output)
-#plt.plot(output)
-#plt.show()
 
-cb_test2 = Crossbar_alg(size, np.full((size, size),P_max))
-cb_test2.update(-1*ini_array)
-output2 = cb_test2.get_array().flatten()
-print(output)
-#plt.plot(output2)
-#plt.show()
 
-plt.plot(np.concatenate((output, output2))*1e6, color='red',)
-plt.xlabel("#Pulse")
-plt.ylabel(r'Condcutance ($\mu$S)')
-plt.show()
+
+######################################################################################
+# Test code
+######################################################################################
+def CB_alg_test():
+    size = 5
+
+    #ini_array = np.array(range(size*size)).reshape(size, size)
+    #test_array = np.array(ini_array)
+    #cb_test = Crossbar_diff(size, test_array)
+    #output = cb_test.get_array().flatten()
+
+    ini_array = np.array(range(size*size)).reshape(size, size)
+    cb_test = Crossbar_alg(size, ini_array)
+
+    output = cb_test.get_array().flatten()
+    print(output)
+    #plt.plot(output)
+    #plt.show()
+
+    cb_test2 = Crossbar_alg(size, np.full((size, size),P_max))
+    cb_test2.update(-1*ini_array)
+    output2 = cb_test2.get_array().flatten()
+    print(output)
+    #plt.plot(output2)
+    #plt.show()
+
+    plt.plot(np.concatenate((output, output2))*1e6, color='red',)
+    plt.xlabel("#Pulse")
+    plt.ylabel(r'Condcutance ($\mu$S)')
+    plt.show()
+
+def CB_quant_test():
+    size = 32
+    ini_array = np.full((size, size), 100)
+    cb_test = Crossbar_Quant(size, ini_array)
+    activation = np.full(size, 100)
+    output = cb_test.accumulate(activation)
+    print(output)
+    plt.plot(output)
+    plt.show()
+
+CB_quant_test()
